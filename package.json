@@ -151,7 +151,7 @@
     "@contentful-tools/cli": "^0.7.3",
     "@contentful-tools/store": "^0.7.3",
     "@dream-bit-de/gatsby-plugin-better-page-tree": "^1.6.0",
-    "@figma/plugin-typings": "^1.17.1",
+    "@figma/plugin-typings": "^1.25.0",
     "@graphql-codegen/cli": "^1.21.4",
     "@graphql-codegen/plugin-helpers": "^1.18.7",
     "@graphql-codegen/typescript": "^1.22.0",
