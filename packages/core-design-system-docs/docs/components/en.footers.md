@@ -18,6 +18,7 @@ import { FootersStandard } from '../../src/code/footer-standard.code';
 import FootersStandardCode from '!!raw-loader!../../src/code/footer-standard.code.tsx';
 import { FootersEnterprise} from '../../src/code/footer-enterprise.code'; 
 import FootersEnterpriseCode from '!!raw-loader!../../src/code/footer-enterprise.code.tsx';
+import { FootersSocialOnly} from '../../src/code/footer-social-only.code'; 
 
 <!-- END CODE IMPORTS -->
 
@@ -64,3 +65,7 @@ newsletter and branding.
 ## Social Only Footer
 
 The Social Only Footer only include the social media icons.
+
+<ThemeWrapper>
+  <FootersSocialOnly />
+</ThemeWrapper>

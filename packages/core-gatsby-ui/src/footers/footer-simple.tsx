@@ -1,80 +1,100 @@
-import { ButtonIcon, PARAGRAPH_SIZE, Variant } from '@newrade/core-design-system';
+import {
+  ButtonIcon,
+  LABEL_SIZE,
+  LOGO,
+  PARAGRAPH_SIZE,
+  TEXT_STYLE,
+  Variant,
+} from '@newrade/core-design-system';
 import {
   Button,
   Cluster,
+  Label,
   Link,
+  Logo,
   Paragraph,
   Stack,
   useCommonProps,
   useTreatTheme,
 } from '@newrade/core-react-ui';
+import { BlockAPI, NavComponent } from '@newrade/core-website-api';
 import { IoLogoFacebook } from '@react-icons/all-files/io5/IoLogoFacebook';
 import { IoLogoInstagram } from '@react-icons/all-files/io5/IoLogoInstagram';
 import { IoLogoLinkedin } from '@react-icons/all-files/io5/IoLogoLinkedin';
 import { IoLogoTwitter } from '@react-icons/all-files/io5/IoLogoTwitter';
 import React from 'react';
-import { useContainerQuery } from 'react-container-query';
 import { useStyles } from 'react-treat';
+import { BlockRenderer } from '../blocks/block-renderer';
+import { lorenipsumMedium, lorenipsumShort } from '../docs-components/loren-ipsum';
+import { GatsbyLink } from '../links/gatsby-link';
+import { FooterBase } from './footer-base';
 import * as styleRefs from './footer-simple.treat';
 import { FooterProps } from './footer.props';
 
-type Props = FooterProps & {
-  MenuLinks?: React.ReactNode;
-  SocialLinks?: React.ReactNode;
-  Copyright?: React.ReactNode;
-};
+type Props = FooterProps;
 
-const query = {
-  'width-between-400-and-599': {
-    minWidth: 400,
-    maxWidth: 599,
-  },
-  'width-larger-than-600': {
-    minWidth: 600,
-  },
-};
+export const FooterSimple = React.forwardRef<any, Props>(
+  ({ id, style, className, footer, ...props }, ref) => {
+    const styles = useStyles(styleRefs);
+    const { theme, cssTheme } = useTreatTheme();
+    const commonProps = useCommonProps({
+      id,
+      style,
+      className,
+      ...props,
+    });
 
-export const FooterSimple: React.FC<Props> = ({
-  id,
-  style,
-  className,
-  MenuLinks,
-  SocialLinks,
-  Copyright,
-  ...props
-}) => {
-  const { styles } = useStyles(styleRefs);
-  const { theme, cssTheme } = useTreatTheme();
-  const commonProps = useCommonProps({
-    id,
-    style,
-    className,
-    classNames: [styles.wrapper],
-    ...props,
-  });
-  // @ts-ignore
-  const [params, containerRef] = useContainerQuery(query);
+    const blocks = footer?.blocks;
+    const copyright = footer?.companyInfo?.copyright;
+    const facebookURL = footer?.companyInfo?.facebookPageURL;
+    const twitterURL = footer?.companyInfo?.twitterPageURL;
+    const instagramURL = footer?.companyInfo?.instagramPageURL;
+    const linkedinURL = footer?.companyInfo?.linkedinPageURL;
+    const navigation = footer?.navigation;
+    const version = footer?.version;
+    const footerNavigation = navigation?.component === NavComponent.footer ? navigation : null;
 
-  return (
-    <Stack as={'footer'} {...commonProps} gap={[cssTheme.sizing.var.x4]} ref={containerRef}>
-      {/* Links */}
-      {JSON.stringify(params)}
-      {MenuLinks ? (
-        <div className={styles.links}>{MenuLinks}</div>
-      ) : (
-        <Cluster className={styles.links} gap={[cssTheme.sizing.var.x3]}>
-          <Link>Home</Link>
-          <Link>Products</Link>
-          <Link>Services</Link>
-          <Link>About</Link>
-          <Link>Contact</Link>
-        </Cluster>
-      )}
-      {/* Social */}
-      {SocialLinks ? (
-        <div className={styles.links}>{SocialLinks}</div>
-      ) : (
-        <Cluster className={styles.links} gap={[cssTheme.sizing.var.x3]}>
+    return (
+      <FooterBase {...commonProps} footer={footer} ref={ref} contentClassName={styles.base}>
+        <div className={styles.navLinks}>
+          {footerNavigation?.subNavigation?.map((subNav) => {
+            if (!subNav) {
+              return null;
+            }
+
+            const links = subNav.links;
+
+            return (
+              <Cluster key={subNav.id} gap={[cssTheme.sizing.var.x4]}>
+                <Label
+                  variantStyle={TEXT_STYLE.boldUppercase}
+                  variant={LABEL_SIZE.xSmall}
+                  variantLevel={Variant.tertiary}
+                >
+                  {subNav.label || ' '}
+                </Label>
+
+                <Cluster
+                  key={id}
+                  gap={[cssTheme.sizing.var.x4, cssTheme.sizing.var.x4, cssTheme.sizing.var.x3]}
+                >
+                  {links?.map((link, id) => {
+                    return (
+                      <Link
+                        key={id}
+                        variantSize={PARAGRAPH_SIZE.small}
+                        AsElement={<GatsbyLink to={link?.page?.slug || ''} />}
+                      >
+                        {link?.label || ' '}
+                      </Link>
+                    );
+                  })}
+                </Cluster>
+              </Cluster>
+              );
+          })}
+        </div>
+        <Cluster className={styles.socialLinks} gap={[cssTheme.sizing.var.x3]}>
           <Button
             Icon={<IoLogoTwitter />}
             icon={ButtonIcon.icon}
@@ -99,11 +119,16 @@ export const FooterSimple: React.FC<Props> = ({
             variant={Variant.tertiary}
           ></Button>
         </Cluster>
-      )}
-      {/* Copyright */}
-      <Paragraph className={styles.copyright} variant={PARAGRAPH_SIZE.xSmall}>
-        {Copyright}
-      </Paragraph>
-    </Stack>
-  );
-};
+
+        <Paragraph
+          className={styles.copyright}
+          variant={PARAGRAPH_SIZE.small}
+          variantLevel={Variant.secondary}
+        >
+          {copyright || `© ${lorenipsumShort}`}
+          {version ? ` — v${version}` : ''}
+        </Paragraph>
+      </FooterBase>
+    );
+  }
+);

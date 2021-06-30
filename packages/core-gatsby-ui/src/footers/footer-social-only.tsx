@@ -28,12 +28,12 @@ import { BlockRenderer } from '../blocks/block-renderer';
 import { lorenipsumMedium, lorenipsumShort } from '../docs-components/loren-ipsum';
 import { GatsbyLink } from '../links/gatsby-link';
 import { FooterBase } from './footer-base';
-import * as styleRefs from './footer-enterprise.treat';
+import * as styleRefs from './footer-social-only.treat';
 import { FooterProps } from './footer.props';
 
 type Props = FooterProps;
 
-export const FooterEnterprise = React.forwardRef<any, Props>(
+export const FooterSocialOnly = React.forwardRef<any, Props>(
   ({ id, style, className, footer, ...props }, ref) => {
     const styles = useStyles(styleRefs);
     const { theme, cssTheme } = useTreatTheme();
@@ -56,19 +56,6 @@ export const FooterEnterprise = React.forwardRef<any, Props>(
 
     return (
       <FooterBase {...commonProps} footer={footer} ref={ref} contentClassName={styles.base}>
-        <Logo name={LOGO.STANDARD} className={styles.logo}></Logo>
-
-        {blocks ? (
-          blocks.map((block) => (
-            <BlockRenderer
-              key={block?.id}
-              className={styles.block}
-              block={block as BlockAPI}
-            ></BlockRenderer>
-          ))
-        ) : (
-          <Paragraph className={styles.block}>{lorenipsumMedium}</Paragraph>
-        )}
 
         <Cluster className={styles.socialLinks} gap={[cssTheme.sizing.var.x3]}>
           <Button
@@ -95,45 +82,6 @@ export const FooterEnterprise = React.forwardRef<any, Props>(
             variant={Variant.tertiary}
           ></Button>
         </Cluster>
-
-        <div className={styles.navLinks}>
-          {footerNavigation?.subNavigation?.map((subNav) => {
-            if (!subNav) {
-              return null;
-            }
-
-            const links = subNav.links;
-
-            return (
-              <Stack key={subNav.id} gap={[cssTheme.sizing.var.x4]}>
-                <Label
-                  variantStyle={TEXT_STYLE.boldUppercase}
-                  variant={LABEL_SIZE.xSmall}
-                  variantLevel={Variant.tertiary}
-                >
-                  {subNav.label || ' '}
-                </Label>
-
-                <Stack
-                  key={id}
-                  gap={[cssTheme.sizing.var.x4, cssTheme.sizing.var.x4, cssTheme.sizing.var.x3]}
-                >
-                  {links?.map((link, id) => {
-                    return (
-                      <Link
-                        key={id}
-                        variantSize={PARAGRAPH_SIZE.small}
-                        AsElement={<GatsbyLink to={link?.page?.slug || ''} />}
-                      >
-                        {link?.label || ' '}
-                      </Link>
-                    );
-                  })}
-                </Stack>
-              </Stack>
-            );
-          })}
-        </div>
 
         <Paragraph
           className={styles.copyright}
